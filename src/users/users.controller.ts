@@ -6,32 +6,36 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common'
+import { UsersService } from './users.service'
 
 @Controller('users')
 export class UsersController {
+  constructor(private usersService: UsersService) {}
+
   @Get()
-  findAllUsers() {
-    return []
+  findAllUsers(@Query('role') role?: 'USER' | 'EDITOR' | 'ADMIN') {
+    return this.usersService.findAll()
   }
 
   @Get(':id')
   findUserById(@Param('id') id: string) {
-    return { id }
+    return this.usersService.findOne(+id)
   }
 
   @Post()
-  createUser(@Body() body: object) {
-    return body
+  createUser(@Body() body: { name: string; email: string; role: string }) {
+    return this.usersService.create(body)
   }
 
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() body: object) {
-    return { id, ...body }
+    return this.usersService.update(+id, body)
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
-    return { id }
+    return this.usersService.delete(+id)
   }
 }
