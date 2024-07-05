@@ -5,7 +5,7 @@ import { join } from 'path'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
-  async logToFile(entry: string) {
+  async logToFile(entry: string, filename: string) {
     const formattedEntry = `${Intl.DateTimeFormat('en-US', {
       dateStyle: 'short',
       timeStyle: 'short',
@@ -17,7 +17,7 @@ export class LoggerService extends ConsoleLogger {
         await mkdir(join(__dirname, '..', '..', 'logs'))
 
       await appendFile(
-        join(__dirname, '..', '..', 'logs', 'logFile.log'),
+        join(__dirname, '..', '..', 'logs', filename),
         formattedEntry,
       )
     } catch (err) {
@@ -27,13 +27,13 @@ export class LoggerService extends ConsoleLogger {
 
   log(message: any, context?: string): void {
     const entry = `${context}\t${message}`
-    this.logToFile(entry)
+    this.logToFile(entry, 'logFile.log')
     super.log(message, context)
   }
 
   error(message: any, stackOrContext?: string): void {
     const entry = `${stackOrContext}\t${message}`
-    this.logToFile(entry)
+    this.logToFile(entry, 'error.log')
     super.error(message, stackOrContext)
   }
 }
